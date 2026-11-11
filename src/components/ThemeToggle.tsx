@@ -27,7 +27,13 @@ export function ThemeToggle() {
   }
 
   return (
-    <button type="button" className="btn btn-ghost" onClick={cycle} aria-label={`Theme: ${theme}`}>
+    <button
+      type="button"
+      className="btn btn-ghost"
+      onClick={cycle}
+      aria-label={`Theme: ${theme}`}
+      title="Cycle theme: Auto → Light → Dark"
+    >
       {theme === 'system' ? 'Auto' : theme === 'light' ? 'Light' : 'Dark'}
     </button>
   )

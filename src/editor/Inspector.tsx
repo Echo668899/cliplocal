@@ -55,6 +55,7 @@ export function Inspector() {
                 type="button"
                 className={project.export.cutMode === 'precise' ? 'btn btn-primary' : 'btn btn-ghost'}
                 onClick={() => setCutMode('precise')}
+                title="Re-encode so start/end follow source timestamps as closely as possible"
               >
                 Precise cut
               </button>
@@ -62,6 +63,7 @@ export function Inspector() {
                 type="button"
                 className={project.export.cutMode === 'fast' ? 'btn btn-primary' : 'btn btn-ghost'}
                 onClick={() => setCutMode('fast')}
+                title="Copy streams when possible. Faster, but cuts may snap to keyframes"
               >
                 Fast cut
               </button>

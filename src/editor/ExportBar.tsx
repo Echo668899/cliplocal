@@ -109,29 +109,55 @@ export function ExportBar() {
   return (
     <div className={styles.root}>
       <div className={styles.actions}>
-        <button type="button" className="btn btn-ghost" onClick={undo} title="Ctrl/Cmd+Z">
+        <button type="button" className="btn btn-ghost" onClick={undo} title="Undo last edit (Ctrl/Cmd+Z)">
           Undo
         </button>
-        <button type="button" className="btn btn-ghost" onClick={redo} title="Shift+Ctrl/Cmd+Z">
+        <button type="button" className="btn btn-ghost" onClick={redo} title="Redo (Shift+Ctrl/Cmd+Z)">
           Redo
         </button>
-        <button type="button" className="btn btn-ghost" onClick={resetToOriginal}>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={resetToOriginal}
+          title="Restore the original timeline and settings. Your source file is kept."
+        >
           Reset to original
         </button>
-        <button type="button" className="btn btn-ghost" onClick={() => void saveSettingsOnly()}>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => void saveSettingsOnly()}
+          title="Save edit settings only. You may need to re-select the original media later."
+        >
           Save settings
         </button>
-        <button type="button" className="btn btn-ghost" onClick={() => void saveWithMedia()}>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => void saveWithMedia()}
+          title="Save settings and a local copy of media in this browser (IndexedDB)."
+        >
           Save to this device
         </button>
-        <button type="button" className="btn btn-danger" onClick={() => void clearWorkspace()}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => void clearWorkspace()}
+          title="Delete temporary files, previews, and saved projects on this device."
+        >
           Clear workspace
         </button>
       </div>
 
       <div className={styles.presets}>
         {(Object.keys(EXPORT_PRESETS) as Array<keyof typeof EXPORT_PRESETS>).map((key) => (
-          <button key={key} type="button" className="btn btn-ghost" onClick={() => applyPreset(key)}>
+          <button
+            key={key}
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => applyPreset(key)}
+            title={`Apply export preset: ${EXPORT_PRESETS[key].label}`}
+          >
             {EXPORT_PRESETS[key].label}
           </button>
         ))}
@@ -151,7 +177,12 @@ export function ExportBar() {
           {engine.error && <span className={styles.error}>{engine.error}</span>}
         </div>
         {engine.status === 'running' ? (
-          <button type="button" className="btn btn-danger" onClick={() => void onCancel()}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => void onCancel()}
+            title="Stop export. Your trim and edits stay so you can try again."
+          >
             Cancel export
           </button>
         ) : (
@@ -160,6 +191,7 @@ export function ExportBar() {
             className="btn btn-primary"
             disabled={!primaryBlob}
             onClick={() => void onExport()}
+            title={`Export the current selection as ${project.export.container.toUpperCase()} on this device`}
           >
             Export {project.export.container.toUpperCase()}
           </button>

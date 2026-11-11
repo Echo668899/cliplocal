@@ -70,7 +70,12 @@ export function HomePage() {
           </p>
           <p className={styles.privacy}>Your video stays on this device.</p>
           <div className={styles.actions}>
-            <button type="button" className="btn btn-ghost" onClick={() => void onSample()}>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => void onSample()}
+              title="Load a short sample video to try trimming without picking a file"
+            >
               Try a sample video
             </button>
           </div>

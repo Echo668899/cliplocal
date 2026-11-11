@@ -406,24 +406,26 @@ export function buildStripMetadataArgs(input: string, output: string): string[] 
 }
 
 export function previewStyle(t: ClipTransform, c: ColorGrade): Record<string, string> {
-  return {
-    filter: [
-      `brightness(${1 + c.brightness})`,
-      `contrast(${c.contrast})`,
-      `saturate(${c.grayscale ? 0 : c.saturation})`,
-      c.blur > 0 ? `blur(${Math.min(c.blur, 8)}px)` : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-    transform: [
-      t.flipH ? 'scaleX(-1)' : '',
-      t.flipV ? 'scaleY(-1)' : '',
-      t.rotation ? `rotate(${t.rotation}deg)` : '',
-      t.scale && t.scale !== 1 ? `scale(${t.scale})` : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-  }
+  const filter = [
+    `brightness(${1 + c.brightness})`,
+    `contrast(${c.contrast})`,
+    `saturate(${c.grayscale ? 0 : c.saturation})`,
+    c.blur > 0 ? `blur(${Math.min(c.blur, 8)}px)` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+  const transform = [
+    t.flipH ? 'scaleX(-1)' : '',
+    t.flipV ? 'scaleY(-1)' : '',
+    // Preview rotation can clip; keep flips/scale only. Rotation is applied on export.
+    t.scale && t.scale !== 1 ? `scale(${t.scale})` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+  const style: Record<string, string> = {}
+  if (filter) style.filter = filter
+  if (transform) style.transform = transform
+  return style
 }
 
 export const EXPORT_PRESETS = {

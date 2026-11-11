@@ -39,7 +39,13 @@ export function SamplePreviewButton() {
 
   return (
     <div>
-      <button type="button" className="btn btn-ghost" disabled={!primary} onClick={() => void onSample()}>
+      <button
+        type="button"
+        className="btn btn-ghost"
+        disabled={!primary}
+        onClick={() => void onSample()}
+        title="Render a short local preview of the first ~3 seconds of your selection"
+      >
         Render 3s sample
       </button>
       {phase && <p className="dim">{phase}</p>}

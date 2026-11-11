@@ -49,10 +49,15 @@ export const VideoPreview = forwardRef<VideoPreviewHandle>(function VideoPreview
   }
 
   const style = clip ? previewStyle(clip.transform, clip.color) : {}
+  const aspect = clip?.transform.aspect ?? 'free'
+  const stageStyle =
+    aspect === 'free' && asset.width && asset.height
+      ? { aspectRatio: `${asset.width} / ${asset.height}` }
+      : undefined
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.stage} data-aspect={clip?.transform.aspect ?? 'free'}>
+      <div className={styles.stage} data-aspect={aspect} style={stageStyle}>
         <video
           ref={videoRef}
           className={styles.video}
