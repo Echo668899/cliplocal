@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { ThemeToggle } from './ThemeToggle'
 import styles from './NavBar.module.css'
 
 const links = [
@@ -16,7 +17,7 @@ export function NavBar() {
       <div className={`container ${styles.inner}`}>
         <NavLink to="/" className={styles.brand}>
           <span className={styles.mark} aria-hidden />
-          <span className={styles.name}>ClipLocal</span>
+          ClipLocal
         </NavLink>
         <nav className={styles.nav} aria-label="Primary">
           {links.map((l) => (
@@ -29,6 +30,7 @@ export function NavBar() {
               {l.label}
             </NavLink>
           ))}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

@@ -18,6 +18,7 @@
   gap: 0.45rem;
   color: var(--text-muted);
   font-size: 0.9rem;
+  min-height: 44px;
 }
 
 .times {
@@ -36,23 +37,25 @@
 }
 
 .timeField input {
-  width: 6.5rem;
+  width: 7rem;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.4rem 0.5rem;
+  padding: 0.45rem 0.5rem;
+  min-height: 44px;
+  font-family: var(--font-mono);
 }
 
 .duration {
-  font-variant-numeric: tabular-nums;
-  color: var(--accent);
+  font-family: var(--font-mono);
+  color: var(--link);
   font-weight: 600;
-  padding-bottom: 0.45rem;
+  padding-bottom: 0.55rem;
 }
 
 .track {
   position: relative;
-  height: 72px;
+  height: 76px;
   border-radius: var(--radius);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -64,8 +67,8 @@
 .rail {
   position: absolute;
   inset: 28px 0 22px;
-  background: linear-gradient(90deg, #1b3530, #244840 40%, #1b3530);
-  opacity: 0.9;
+  background: var(--track-video);
+  opacity: 0.35;
 }
 
 .mark {
@@ -75,15 +78,16 @@
   font-size: 0.65rem;
   color: var(--text-dim);
   pointer-events: none;
+  font-family: var(--font-mono);
 }
 
 .range {
   position: absolute;
   top: 18px;
   bottom: 12px;
-  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
   border: 1px solid var(--accent);
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: grab;
 }
 
@@ -92,8 +96,9 @@
   top: -4px;
   bottom: -4px;
   width: 18px;
+  min-width: 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   background: var(--accent);
   touch-action: none;
   padding: 0;

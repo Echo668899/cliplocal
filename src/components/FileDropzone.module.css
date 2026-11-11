@@ -1,28 +1,20 @@
 .zone {
-  border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--border));
-  border-radius: calc(var(--radius) + 4px);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg-elevated) 88%, transparent), var(--bg-panel)),
-    repeating-linear-gradient(
-      -12deg,
-      transparent,
-      transparent 10px,
-      rgba(61, 220, 151, 0.03) 10px,
-      rgba(61, 220, 151, 0.03) 20px
-    );
-  padding: 2.5rem 1.5rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  padding: 2rem 1.25rem;
   text-align: center;
-  transition: border-color 0.2s var(--ease), transform 0.25s var(--ease), background 0.2s var(--ease);
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
 }
 
 .zone:hover,
 .dragging {
   border-color: var(--accent);
-  transform: translateY(-2px);
+  background: var(--accent-soft);
 }
 
 .compact {
-  padding: 1.25rem 1rem;
+  padding: 1rem;
 }
 
 .label {
@@ -34,7 +26,7 @@
 }
 
 .hint {
-  margin-top: 0.9rem;
+  margin-top: 0.75rem;
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }

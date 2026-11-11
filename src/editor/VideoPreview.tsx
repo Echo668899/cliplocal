@@ -1,14 +1,22 @@
-import { useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { previewStyle } from '@/services/ffmpeg/argBuilder'
 import { useProjectStore } from '@/workspace/projectStore'
 import styles from './VideoPreview.module.css'
 
-export function VideoPreview() {
+export type VideoPreviewHandle = {
+  getVideo: () => HTMLVideoElement | null
+}
+
+export const VideoPreview = forwardRef<VideoPreviewHandle>(function VideoPreview(_, ref) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const project = useProjectStore((s) => s.history.present)
   const clip = project.clips[0]
   const asset = clip ? project.assets[clip.assetId] : null
   const { start, end } = project.selection
+
+  useImperativeHandle(ref, () => ({
+    getVideo: () => videoRef.current,
+  }))
 
   useEffect(() => {
     const video = videoRef.current
@@ -58,7 +66,13 @@ export function VideoPreview() {
           <div
             key={t.id}
             className={styles.overlayText}
-            style={{ left: t.x, top: t.y, fontSize: t.fontSize, color: t.color, opacity: t.opacity }}
+            style={{
+              left: t.x,
+              top: t.y,
+              fontSize: t.fontSize,
+              color: t.color,
+              opacity: t.opacity,
+            }}
           >
             {t.text}
           </div>
@@ -66,11 +80,14 @@ export function VideoPreview() {
       </div>
       <div className={styles.meta}>
         <span>{asset.name}</span>
-        <span className="dim">
+        <span className="dim mono">
           {asset.width && asset.height ? `${asset.width}×${asset.height}` : '—'}
           {asset.duration != null ? ` · ${asset.duration.toFixed(2)}s` : ''}
         </span>
       </div>
+      <p className="dim" style={{ fontSize: '0.8rem' }}>
+        Press ? for keyboard shortcuts. Color/crop preview is approximate — export uses FFmpeg.
+      </p>
     </div>
   )
-}
+})

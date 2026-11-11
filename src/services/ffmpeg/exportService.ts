@@ -1,4 +1,4 @@
-import { buildTrimJob } from './argBuilder'
+import { buildProjectExportJob } from './argBuilder'
 import { bytesToBlob } from './bytes'
 import { ffmpegRuntime, type ProgressEvent } from './runtime'
 import { createManagedObjectUrl } from '@/workspace/objectUrls'
@@ -19,7 +19,7 @@ export async function exportProject(options: {
   const container = options.project.export.container
   const outputName = `clip_${Date.now()}.${extForContainer(container)}`
   const inputName = `input_${Date.now()}.bin`
-  const job = buildTrimJob(options.project, inputName, outputName)
+  const job = buildProjectExportJob(options.project, inputName, outputName)
 
   // Apply burn-in subtitles via temp srt if needed
   const inputs: Array<{ name: string; data: Blob | File | Uint8Array }> = [

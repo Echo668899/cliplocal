@@ -1,5 +1,5 @@
 import type { ProjectDocument } from '@/edit-graph/types'
-import { buildTrimJob } from './argBuilder'
+import { buildProjectExportJob } from './argBuilder'
 import { bytesToBlob } from './bytes'
 import { cuesToSrt } from './exportService'
 import { ffmpegRuntime, type ProgressEvent } from './runtime'
@@ -19,7 +19,7 @@ export async function exportProjectWithOptionalBgm(options: {
   const container = options.project.export.container
   const outputName = `clip_${Date.now()}.${container}`
   const inputName = `input_${Date.now()}.bin`
-  const job = buildTrimJob(options.project, inputName, outputName)
+  const job = buildProjectExportJob(options.project, inputName, outputName)
   const inputs: Array<{ name: string; data: Blob | Uint8Array }> = [
     { name: inputName, data: options.primaryBlob },
   ]

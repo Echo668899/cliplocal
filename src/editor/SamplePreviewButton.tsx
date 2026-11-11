@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { buildTrimJob } from '@/services/ffmpeg/argBuilder'
+import { buildProjectExportJob } from '@/services/ffmpeg/argBuilder'
 import { bytesToBlob } from '@/services/ffmpeg/bytes'
 import { ffmpegRuntime } from '@/services/ffmpeg/runtime'
 import { createManagedObjectUrl } from '@/workspace/objectUrls'
@@ -25,7 +25,7 @@ export function SamplePreviewButton() {
     await ffmpegRuntime.ensureLoaded((e) => setPhase(e.phase))
     const inputName = 'sample_in.bin'
     const outputName = 'sample.mp4'
-    const job = buildTrimJob(sampleProject, inputName, outputName)
+    const job = buildProjectExportJob(sampleProject, inputName, outputName)
     const result = await ffmpegRuntime.run({
       args: job.args,
       inputs: [{ name: inputName, data: primary }],

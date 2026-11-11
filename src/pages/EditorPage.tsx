@@ -1,3 +1,4 @@
+import { useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '@/app/usePageTitle'
 import { FileDropzone } from '@/components/FileDropzone'
@@ -5,7 +6,8 @@ import { ExportBar } from '@/editor/ExportBar'
 import { Inspector } from '@/editor/Inspector'
 import { SamplePreviewButton } from '@/editor/SamplePreviewButton'
 import { Timeline } from '@/editor/Timeline'
-import { VideoPreview } from '@/editor/VideoPreview'
+import { VideoPreview, type VideoPreviewHandle } from '@/editor/VideoPreview'
+import { useEditorHotkeys } from '@/editor/useEditorHotkeys'
 import { useProjectStore } from '@/workspace/projectStore'
 import styles from './EditorPage.module.css'
 
@@ -15,6 +17,17 @@ export function EditorPage() {
   const project = useProjectStore((s) => s.history.present)
   const ingestFiles = useProjectStore((s) => s.ingestFiles)
   const hasClip = project.clips.length > 0
+  const previewRef = useRef<VideoPreviewHandle>(null)
+  const videoRef = useMemo(
+    () => ({
+      get current() {
+        return previewRef.current?.getVideo() ?? null
+      },
+    }),
+    [],
+  )
+
+  useEditorHotkeys({ videoRef })
 
   return (
     <main className={styles.page}>
@@ -30,7 +43,7 @@ export function EditorPage() {
 
       <div className={`container ${styles.layout}`}>
         <section className={styles.main}>
-          <VideoPreview />
+          <VideoPreview ref={previewRef} />
           <Timeline />
           <SamplePreviewButton />
           <ExportBar />

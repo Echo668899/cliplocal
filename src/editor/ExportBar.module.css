@@ -30,6 +30,12 @@
   font-size: 0.9rem;
 }
 
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .args {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -42,7 +48,8 @@
   margin-top: 0.5rem;
   white-space: pre-wrap;
   word-break: break-word;
-  color: var(--sand);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
   font-size: 0.8rem;
 }
 

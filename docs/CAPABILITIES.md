@@ -46,6 +46,16 @@ Status legend:
 - `limited`: works with caveats
 - `pending-device`: awaiting broader browser/device confirmation (see ACCEPTANCE.md)
 
+## Honest UI notes (current build)
+
+| UI control | Export behavior |
+|---|---|
+| Precise / Fast trim selection | Applied on active clip selection |
+| Aspect / rotate / flip / color / text / mute / BGM | Applied in export args |
+| Multi-clip transitions / PiP / split screen | Stored in edit graph; use Merge tool or Advanced for full multi-input graphs |
+| Region blur | Approximated; boxed blur via Advanced |
+| drawtext fonts | Depends on font availability in MEMFS |
+
 ## Containers (stock core)
 
 **Demux/read (common):** mp4/mov, matroska/webm, gif, image2, mp3, wav, aac, srt/webvtt (as data)

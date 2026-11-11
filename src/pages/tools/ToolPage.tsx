@@ -380,6 +380,102 @@ export function ToolPage() {
             Strip metadata
           </button>
         )
+      case 'resize':
+        return (
+          <div className={styles.controls}>
+            <div className={styles.row}>
+              {[
+                { label: '1080p', w: 1920, h: 1080 },
+                { label: '720p', w: 1280, h: 720 },
+                { label: '480p', w: 854, h: 480 },
+              ].map((p) => (
+                <button
+                  key={p.label}
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    const doc = structuredClone(project)
+                    doc.export.width = p.w
+                    doc.export.height = p.h
+                    setProject(doc)
+                  }}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <button type="button" className="btn btn-primary" onClick={continueEditor}>
+              Continue in editor to export
+            </button>
+          </div>
+        )
+      case 'convert':
+        return (
+          <div className={styles.controls}>
+            <p className="dim">Pick a container in the editor Export panel, then export locally.</p>
+            <div className={styles.row}>
+              {(['mp4', 'webm', 'mkv', 'mov'] as const).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    const doc = structuredClone(project)
+                    doc.export.container = c
+                    setProject(doc)
+                  }}
+                >
+                  {c.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <button type="button" className="btn btn-primary" onClick={continueEditor}>
+              Continue in editor
+            </button>
+          </div>
+        )
+      case 'add-music':
+        return (
+          <div className={styles.controls}>
+            <label className="field">
+              <span>Background music</span>
+              <input
+                type="file"
+                accept="audio/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  await ingestFiles([file])
+                }}
+              />
+            </label>
+            <p className="dim">
+              {project.audio.bgmAssetId
+                ? 'BGM attached. Adjust volumes in the editor Audio panel, then export.'
+                : 'Choose a video first, then attach an audio file.'}
+            </p>
+            <button type="button" className="btn btn-primary" onClick={continueEditor}>
+              Continue in editor
+            </button>
+          </div>
+        )
+      case 'reverse':
+        return (
+          <div className={styles.controls}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={!clip}
+              onClick={() => {
+                if (!clip) return
+                updateClip(clip.id, { reverse: true })
+                continueEditor()
+              }}
+            >
+              Reverse and open editor
+            </button>
+          </div>
+        )
       default:
         return null
     }
@@ -400,6 +496,13 @@ export function ToolPage() {
       <h1>{h1}</h1>
       <p className="muted">{description}</p>
       <p className="chip">Your video stays on this device.</p>
+      {tool.steps && tool.steps.length > 0 && (
+        <ol className={styles.steps}>
+          {tool.steps.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ol>
+      )}
 
       <section className={`panel ${styles.panel}`}>
         <FileDropzone

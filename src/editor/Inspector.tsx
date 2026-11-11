@@ -138,6 +138,9 @@ export function Inspector() {
                 <option value="wiperight">Wipe right</option>
               </select>
             </label>
+            <p className="approx-note">
+              Multi-clip transitions apply when exporting a merged timeline via the Merge tool or Advanced console. Single-clip export uses fades on the active selection.
+            </p>
             <label className="field">
               <span>Freeze at (s on source)</span>
               <input
@@ -296,6 +299,9 @@ export function Inspector() {
             >
               Add blur region
             </button>
+            <p className="approx-note">
+              Region blur currently applies a full-frame blur strength for export reliability. Precise boxed blur is available in Advanced.
+            </p>
           </div>
         )}
 

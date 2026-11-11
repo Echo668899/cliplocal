@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '@/app/usePageTitle'
 import { FileDropzone } from '@/components/FileDropzone'
@@ -11,10 +12,7 @@ export function HomePage() {
   const ingestFiles = useProjectStore((s) => s.ingestFiles)
   const setEngine = useProjectStore((s) => s.setEngine)
 
-  const onFiles = async (files: File[]) => {
-    await ingestFiles(files)
-    navigate('/editor')
-    // Load engine in background
+  const warmEngine = () => {
     void (async () => {
       try {
         setEngine({ status: 'loading', phase: 'Loading engine in background' })
@@ -30,6 +28,37 @@ export function HomePage() {
     })()
   }
 
+  const onFiles = async (files: File[]) => {
+    await ingestFiles(files)
+    navigate('/editor')
+    warmEngine()
+  }
+
+  const onSample = async () => {
+    try {
+      const res = await fetch('/samples/sample-60s.mp4')
+      if (!res.ok) throw new Error('Sample video is not available on this deploy yet.')
+      const blob = await res.blob()
+      const file = new File([blob], 'sample-60s.mp4', { type: 'video/mp4' })
+      await onFiles([file])
+    } catch (err) {
+      alert(err instanceof Error ? err.message : String(err))
+    }
+  }
+
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const files = e.clipboardData?.files
+      if (!files?.length) return
+      void ingestFiles(Array.from(files)).then(() => {
+        navigate('/editor')
+        warmEngine()
+      })
+    }
+    window.addEventListener('paste', onPaste)
+    return () => window.removeEventListener('paste', onPaste)
+  }, [ingestFiles, navigate])
+
   return (
     <main className={styles.hero}>
       <div className={`container ${styles.grid}`}>
@@ -40,9 +69,18 @@ export function HomePage() {
             Trim, crop, caption, and export — without uploading a frame.
           </p>
           <p className={styles.privacy}>Your video stays on this device.</p>
+          <div className={styles.actions}>
+            <button type="button" className="btn btn-ghost" onClick={() => void onSample()}>
+              Try a sample video
+            </button>
+          </div>
         </div>
-        <div className={styles.drop}>
-          <FileDropzone onFiles={(f) => void onFiles(f)} label="Choose video" hint="Or drop a video here to start editing" />
+        <div>
+          <FileDropzone
+            onFiles={(f) => void onFiles(f)}
+            label="Choose video"
+            hint="Or drop a video here. You can also paste a file."
+          />
         </div>
       </div>
     </main>

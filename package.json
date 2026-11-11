@@ -12,6 +12,7 @@
     "deploy:cf": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler deploy",
     "deploy:pages": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler pages deploy dist --project-name=cliplocal",
     "caps": "node scripts/extract-capabilities.mjs",
+    "sample": "node scripts/generate-sample.mjs",
     "ffmpeg:copy": "node scripts/copy-ffmpeg.mjs",
     "postinstall": "node scripts/copy-ffmpeg.mjs"
   },
@@ -20,8 +21,6 @@
     "@ffmpeg/core-mt": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@fontsource/dm-sans": "^5.2.8",
-    "@fontsource/instrument-serif": "^5.2.8",
     "idb": "^8.0.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

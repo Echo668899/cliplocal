@@ -23,28 +23,29 @@ export function PrivacyPage() {
       <section className={`panel ${styles.section}`}>
         <h2>What the site downloads</h2>
         <p>
-          The app self-hosts JavaScript, CSS, fonts, Web Workers, and FFmpeg WebAssembly cores
-          (<code>@ffmpeg/core@0.12.10</code> and <code>@ffmpeg/core-mt@0.12.10</code>). Cloudflare only distributes these application assets.
+          The app self-hosts JavaScript, CSS, Web Workers, and FFmpeg WebAssembly cores
+          (<code>@ffmpeg/core@0.12.10</code> and <code>@ffmpeg/core-mt@0.12.10</code>). Cloudflare only
+          distributes these application assets from this origin (including R2-backed cores under
+          <code> /ffmpeg/</code>).
         </p>
-        <p>
-          There is no third-party analytics, session replay, or remote error reporting on editor pages.
-        </p>
+        <p>There is no third-party analytics, session replay, or remote error reporting.</p>
       </section>
 
       <section className={`panel ${styles.section}`}>
         <h2>Saving projects</h2>
         <p>
-          By default ClipLocal uses a temporary workspace. Choose <strong>Save settings</strong> to keep edit decisions without copying media,
-          or <strong>Save to this device</strong> to also store media copies in IndexedDB.
-        </p>
-        <p>
-          If you save settings only, you may need to re-select the original files when you reopen the project.
+          By default ClipLocal uses a temporary workspace. Choose <strong>Save settings</strong> to keep
+          edit decisions without copying media — when you reopen, you may need to re-select the original
+          files. Choose <strong>Save to this device</strong> to also store media copies in IndexedDB.
         </p>
       </section>
 
       <section className={`panel ${styles.section}`}>
         <h2>Clear local data</h2>
-        <p>Clear workspace removes temporary inputs, outputs, previews, object URLs, and saved projects on this device.</p>
+        <p>
+          Clear workspace removes temporary inputs, outputs, previews, object URLs, and saved projects on
+          this device.
+        </p>
         <button type="button" className="btn btn-danger" onClick={() => void clearWorkspace()}>
           Clear workspace
         </button>
