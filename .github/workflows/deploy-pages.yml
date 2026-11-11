@@ -51,6 +51,15 @@ jobs:
           npx wrangler r2 object put "$BUCKET/core-mt/ffmpeg-core.wasm" --file=public/ffmpeg/core-mt/ffmpeg-core.wasm --content-type=application/wasm --remote
           npx wrangler r2 object put "$BUCKET/core-mt/ffmpeg-core.worker.js" --file=public/ffmpeg/core-mt/ffmpeg-core.worker.js --content-type=text/javascript --remote
 
+      - name: Ensure Pages project exists
+        if: github.event_name != 'pull_request'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create cliplocal --production-branch=master
+        continue-on-error: true
+
       - name: Deploy to Cloudflare Pages
         if: github.event_name != 'pull_request'
         uses: cloudflare/wrangler-action@v3
