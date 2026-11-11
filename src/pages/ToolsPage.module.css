@@ -1,0 +1,39 @@
+.page {
+  padding: 1.5rem 0 3rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 400;
+  margin-bottom: 0.35rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.card {
+  padding: 1.1rem 1.15rem;
+  transition: transform 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.45rem;
+}
+
+.card p {
+  font-size: 0.92rem;
+}

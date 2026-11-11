@@ -1,0 +1,128 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.loop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.timeField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.timeField input {
+  width: 6.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.5rem;
+}
+
+.duration {
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  font-weight: 600;
+  padding-bottom: 0.45rem;
+}
+
+.track {
+  position: relative;
+  height: 72px;
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  touch-action: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.rail {
+  position: absolute;
+  inset: 28px 0 22px;
+  background: linear-gradient(90deg, #1b3530, #244840 40%, #1b3530);
+  opacity: 0.9;
+}
+
+.mark {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.range {
+  position: absolute;
+  top: 18px;
+  bottom: 12px;
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: grab;
+}
+
+.handle {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 18px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  touch-action: none;
+  padding: 0;
+}
+
+.start {
+  left: -9px;
+}
+
+.end {
+  right: -9px;
+}
+
+.empty {
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .handle {
+    width: 22px;
+  }
+  .start {
+    left: -11px;
+  }
+  .end {
+    right: -11px;
+  }
+}

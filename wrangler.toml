@@ -1,0 +1,9 @@
+name = "cliplocal"
+compatibility_date = "2025-04-01"
+pages_build_output_dir = "dist"
+
+# Optional: upload stock cores to R2 (keys under core/ and core-mt/)
+# then bind the bucket so functions/ffmpeg/[[path]] can serve >25 MiB wasm.
+# [[r2_buckets]]
+# binding = "FFMPEG_BUCKET"
+# bucket_name = "cliplocal-ffmpeg"
