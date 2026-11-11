@@ -8,8 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=cliplocal",
-    "deploy:cf": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler pages deploy dist --project-name=cliplocal",
+    "deploy": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler deploy",
+    "deploy:cf": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler deploy",
+    "deploy:pages": "npm run build && node scripts/prepare-cf-dist.mjs && wrangler pages deploy dist --project-name=cliplocal",
     "caps": "node scripts/extract-capabilities.mjs",
     "ffmpeg:copy": "node scripts/copy-ffmpeg.mjs",
     "postinstall": "node scripts/copy-ffmpeg.mjs"

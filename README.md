@@ -25,36 +25,30 @@ Open the printed local URL. Confirm `crossOriginIsolated` is `true` in the conso
 ```bash
 npm run build
 npm run preview
-npm run deploy        # direct wrangler deploy (includes large wasm — may fail on Pages)
-npm run deploy:cf     # Pages-safe: strip wasm, expect R2 for cores
+npm run deploy        # Workers: strip oversized wasm, wrangler deploy
 ```
 
-### GitHub Actions
+### GitHub Actions → Cloudflare Worker
 
-Push to `master`/`main` runs [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
+Push to `master`/`main` runs [`.github/workflows/deploy-worker.yml`](.github/workflows/deploy-worker.yml):
+
+1. Build the SPA
+2. Strip `ffmpeg-core.wasm` from `dist` (asset size limit)
+3. Create/upload cores to R2 bucket `cliplocal-ffmpeg`
+4. `wrangler deploy` Worker + static assets
 
 Required repository **secrets**:
 
 | Secret | Purpose |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | Token with Pages + (optional) R2 edit |
+| `CLOUDFLARE_API_TOKEN` | Workers Scripts Edit + R2 Edit + Account read |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account id |
 
-Optional repository **variables**:
+Production URL (workers.dev): `https://cliplocal.<your-subdomain>.workers.dev`
 
-| Variable | Purpose |
-|---|---|
-| `UPLOAD_FFMPEG_R2` | Set to `true` to sync cores to R2 on each deploy |
-| `FFMPEG_R2_BUCKET` | R2 bucket name (default `cliplocal-ffmpeg`) |
+### FFmpeg cores on R2
 
-### Cloudflare Pages note (25 MiB)
-
-Stock `ffmpeg-core.wasm` is ~31–32 MiB, above the Pages per-file limit. Options:
-
-1. Host cores via R2 and enable `functions/ffmpeg/[[path]].js` with an `FFMPEG_BUCKET` binding (see `wrangler.toml`). Set `UPLOAD_FFMPEG_R2=true` in GitHub Actions variables.
-2. Deploy the SPA to a host without that file-size cap, keeping the same `_headers` requirements.
-
-Application JS/CSS/fonts remain self-hosted either way. No third-party analytics.
+Stock `ffmpeg-core.wasm` is ~31–32 MiB. The Worker serves `/ffmpeg/*` from R2 (`FFMPEG_BUCKET` → `cliplocal-ffmpeg`). JS/CSS/fonts stay on Worker assets. No third-party analytics.
 
 ## Product surfaces
 

@@ -1,10 +1,8 @@
 name: Deploy Cloudflare Pages
 
+# Pages workflow kept disabled; ClipLocal now deploys via Workers.
+# Re-enable by removing the schedule filter / using workflow_dispatch only if needed.
 on:
-  push:
-    branches: [master, main]
-  pull_request:
-    branches: [master, main]
   workflow_dispatch:
 
 concurrency:
@@ -12,58 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  skipped:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Prepare Cloudflare dist (omit oversized wasm)
-        run: node scripts/prepare-cf-dist.mjs
-
-      - name: Upload FFmpeg cores to R2
-        if: github.event_name != 'pull_request' && vars.UPLOAD_FFMPEG_R2 == 'true'
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          R2_BUCKET: ${{ vars.FFMPEG_R2_BUCKET }}
-        run: |
-          set -euo pipefail
-          BUCKET="${R2_BUCKET:-cliplocal-ffmpeg}"
-          npx wrangler r2 object put "$BUCKET/core/ffmpeg-core.js" --file=public/ffmpeg/core/ffmpeg-core.js --content-type=text/javascript --remote
-          npx wrangler r2 object put "$BUCKET/core/ffmpeg-core.wasm" --file=public/ffmpeg/core/ffmpeg-core.wasm --content-type=application/wasm --remote
-          npx wrangler r2 object put "$BUCKET/core-mt/ffmpeg-core.js" --file=public/ffmpeg/core-mt/ffmpeg-core.js --content-type=text/javascript --remote
-          npx wrangler r2 object put "$BUCKET/core-mt/ffmpeg-core.wasm" --file=public/ffmpeg/core-mt/ffmpeg-core.wasm --content-type=application/wasm --remote
-          npx wrangler r2 object put "$BUCKET/core-mt/ffmpeg-core.worker.js" --file=public/ffmpeg/core-mt/ffmpeg-core.worker.js --content-type=text/javascript --remote
-
-      - name: Ensure Pages project exists
-        if: github.event_name != 'pull_request'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages project create cliplocal --production-branch=master
-        continue-on-error: true
-
-      - name: Deploy to Cloudflare Pages
-        if: github.event_name != 'pull_request'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=cliplocal --commit-dirty=true
+      - name: Notice
+        run: echo "Pages deploy is retired. Use the Deploy Cloudflare Worker workflow instead."

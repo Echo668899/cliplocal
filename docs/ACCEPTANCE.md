@@ -85,13 +85,13 @@ Mark each cell `pass` / `fail` / `pending` during QA. Items below list the requi
 | Probe / strip metadata / batch preset | Probe tool + `features/batch` | Console | |
 | FFmpeg Console + presets | Advanced page | — | Workspace FS only |
 
-## Deploy checks (Cloudflare)
+## Deploy checks (Cloudflare Worker)
 
 - [ ] `COOP` / `COEP` present once (no duplicated merged values)
 - [ ] `self.crossOriginIsolated === true`
-- [ ] `.wasm` served as `application/wasm`
-- [ ] Core files reachable (static or R2 proxy under `/ffmpeg/*`)
-- [ ] Single-file size strategy documented if Pages 25 MiB limit blocks wasm upload
+- [ ] `.wasm` served as `application/wasm` via Worker `/ffmpeg/*` → R2
+- [ ] Worker `cliplocal` + R2 bucket `cliplocal-ffmpeg` deployed
+- [ ] SPA routes fall back to `index.html`
 
 ## Automated / local verification already run
 

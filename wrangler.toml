@@ -1,9 +1,15 @@
 name = "cliplocal"
+main = "worker/index.js"
 compatibility_date = "2025-04-01"
-pages_build_output_dir = "dist"
+workers_dev = true
 
-# Optional: upload stock cores to R2 (keys under core/ and core-mt/)
-# then bind the bucket so functions/ffmpeg/[[path]] can serve >25 MiB wasm.
-# [[r2_buckets]]
-# binding = "FFMPEG_BUCKET"
-# bucket_name = "cliplocal-ffmpeg"
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+# Only invoke Worker for FFmpeg cores; SPA/static files use assets + _headers.
+run_worker_first = ["/ffmpeg/*"]
+
+[[r2_buckets]]
+binding = "FFMPEG_BUCKET"
+bucket_name = "cliplocal-ffmpeg"
