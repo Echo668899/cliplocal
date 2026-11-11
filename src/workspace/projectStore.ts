@@ -37,6 +37,8 @@ type ProjectStore = {
   engine: EngineState
   exportResult: ExportResult | null
   abortController: AbortController | null
+  /** Live scrub time while dragging the timeline (seconds). */
+  scrubTime: number | null
 
   project: () => ProjectDocument
   setProject: (doc: ProjectDocument, recordHistory?: boolean) => void
@@ -45,7 +47,8 @@ type ProjectStore = {
   resetToOriginal: () => void
 
   ingestFiles: (files: FileList | File[]) => Promise<MediaAsset[]>
-  setSelection: (start: number, end: number) => void
+  setSelection: (start: number, end: number, options?: { recordHistory?: boolean; scrubTo?: number | null }) => void
+  setScrubTime: (time: number | null) => void
   setLoopSelection: (loop: boolean) => void
   setCutMode: (mode: CutMode) => void
   updateClip: (clipId: string, patch: Partial<TimelineClip>) => void
@@ -79,6 +82,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   engine: { status: 'idle', mode: null, phase: 'Engine idle' },
   exportResult: null,
   abortController: null,
+  scrubTime: null,
 
   project: () => get().history.present,
 
@@ -162,18 +166,24 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     return assets
   },
 
-  setSelection: (start, end) => {
+  setSelection: (start, end, options) => {
     const doc = structuredClone(get().project())
     const duration = primaryDuration(doc)
-    const s = Math.max(0, Math.min(start, duration))
+    const s = Math.max(0, Math.min(start, duration || start))
     const e = Math.max(s + 0.01, Math.min(end, duration || end))
     doc.selection = { start: s, end: e }
     if (doc.clips[0]) {
       doc.clips[0].sourceStart = s
       doc.clips[0].sourceEnd = e
     }
-    get().setProject(doc)
+    const recordHistory = options?.recordHistory ?? true
+    get().setProject(doc, recordHistory)
+    if (options && 'scrubTo' in options) {
+      set({ scrubTime: options.scrubTo ?? null })
+    }
   },
+
+  setScrubTime: (time) => set({ scrubTime: time }),
 
   setLoopSelection: (loop) => {
     const doc = structuredClone(get().project())
@@ -306,6 +316,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       exportResult: null,
       engine: { status: 'idle', mode: null, phase: 'Engine idle' },
       abortController: null,
+      scrubTime: null,
     })
   },
 }))

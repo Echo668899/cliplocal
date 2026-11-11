@@ -7,12 +7,23 @@ export type VideoPreviewHandle = {
   getVideo: () => HTMLVideoElement | null
 }
 
-export const VideoPreview = forwardRef<VideoPreviewHandle>(function VideoPreview(_, ref) {
+type Props = {
+  onPickFiles?: (files: File[]) => void
+}
+
+export const VideoPreview = forwardRef<VideoPreviewHandle, Props>(function VideoPreview(
+  { onPickFiles },
+  ref,
+) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const project = useProjectStore((s) => s.history.present)
+  const scrubTime = useProjectStore((s) => s.scrubTime)
   const clip = project.clips[0]
   const asset = clip ? project.assets[clip.assetId] : null
   const { start, end } = project.selection
+  const prevStart = useRef(start)
+  const prevEnd = useRef(end)
 
   useImperativeHandle(ref, () => ({
     getVideo: () => videoRef.current,
@@ -32,18 +43,65 @@ export const VideoPreview = forwardRef<VideoPreviewHandle>(function VideoPreview
     return () => video.removeEventListener('timeupdate', onTimeUpdate)
   }, [asset, start, end, project.loopSelection])
 
+  // Follow timeline scrub / selection changes in both directions
   useEffect(() => {
     const video = videoRef.current
     if (!video || !asset) return
-    if (video.currentTime < start || video.currentTime > end) {
-      video.currentTime = start
+
+    let target: number
+    if (typeof scrubTime === 'number') {
+      target = scrubTime
+    } else {
+      const startChanged = Math.abs(start - prevStart.current) > 0.001
+      const endChanged = Math.abs(end - prevEnd.current) > 0.001
+      if (endChanged && !startChanged) target = end
+      else target = start
     }
-  }, [asset, start, end])
+    prevStart.current = start
+    prevEnd.current = end
+
+    const clamped = Math.max(0, Math.min(target, asset.duration ?? target))
+    if (Math.abs(video.currentTime - clamped) > 0.03) {
+      try {
+        video.currentTime = clamped
+      } catch {
+        /* ignore seek errors while metadata loads */
+      }
+    }
+  }, [asset, start, end, scrubTime])
 
   if (!asset) {
     return (
-      <div className={styles.empty}>
-        <p>Choose a video to preview</p>
+      <div
+        className={styles.wrap}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault()
+          const files = e.dataTransfer.files
+          if (files?.length) onPickFiles?.(Array.from(files))
+        }}
+      >
+        <button
+          type="button"
+          className={styles.empty}
+          onClick={() => fileInputRef.current?.click()}
+          title="Choose a video from this device"
+        >
+          <span className={styles.emptyTitle}>Choose a video</span>
+          <span className="muted">Click here or drop a file to start editing</span>
+          <span className={`btn btn-primary ${styles.emptyCta}`}>Choose video</span>
+        </button>
+        <input
+          ref={fileInputRef}
+          className="sr-only"
+          type="file"
+          accept="video/*,audio/*,image/*,.srt,.vtt,.ass"
+          onChange={(e) => {
+            const files = e.target.files
+            if (files?.length) onPickFiles?.(Array.from(files))
+            e.target.value = ''
+          }}
+        />
       </div>
     )
   }
@@ -65,7 +123,7 @@ export const VideoPreview = forwardRef<VideoPreviewHandle>(function VideoPreview
           style={style}
           controls
           playsInline
-          preload="metadata"
+          preload="auto"
         />
         {clip?.texts.map((t) => (
           <div

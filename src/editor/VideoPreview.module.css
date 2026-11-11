@@ -71,10 +71,33 @@
 
 .empty {
   min-height: 280px;
-  display: grid;
-  place-items: center;
-  border: 1px dashed var(--border);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px dashed var(--border-strong);
   border-radius: var(--radius);
   color: var(--text-muted);
   background: var(--bg-elevated);
+  cursor: pointer;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.empty:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.emptyTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.emptyCta {
+  margin-top: 0.35rem;
+  pointer-events: none;
 }

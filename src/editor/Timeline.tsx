@@ -8,6 +8,7 @@ type DragKind = 'start' | 'end' | 'range'
 export function Timeline() {
   const project = useProjectStore((s) => s.history.present)
   const setSelection = useProjectStore((s) => s.setSelection)
+  const setScrubTime = useProjectStore((s) => s.setScrubTime)
   const setLoopSelection = useProjectStore((s) => s.setLoopSelection)
   const trackRef = useRef<HTMLDivElement>(null)
   const selectionRef = useRef(project.selection)
@@ -57,25 +58,29 @@ export function Timeline() {
       const dur = durationRef.current
       if (!dur) return
       const t = timeFromClientX(e.clientX)
-      const minSpan = Math.min(0.05, dur)
+      const minSpan = Math.min(0.05, Math.max(dur / 1000, 0.01))
 
       if (drag.kind === 'start') {
-        const nextStart = Math.min(t, drag.originEnd - minSpan)
-        setSelection(Math.max(0, nextStart), drag.originEnd)
+        const nextStart = Math.max(0, Math.min(t, drag.originEnd - minSpan))
+        setSelection(nextStart, drag.originEnd, { recordHistory: false, scrubTo: nextStart })
       } else if (drag.kind === 'end') {
-        const nextEnd = Math.max(t, drag.originStart + minSpan)
-        setSelection(drag.originStart, Math.min(dur, nextEnd))
+        const nextEnd = Math.min(dur, Math.max(t, drag.originStart + minSpan))
+        setSelection(drag.originStart, nextEnd, { recordHistory: false, scrubTo: nextEnd })
       } else {
         const span = drag.originEnd - drag.originStart
         let nextStart = t - drag.grabOffset
         nextStart = Math.max(0, Math.min(nextStart, dur - span))
-        setSelection(nextStart, nextStart + span)
+        setSelection(nextStart, nextStart + span, { recordHistory: false, scrubTo: nextStart })
       }
     }
 
     const onUp = (e: PointerEvent) => {
       const drag = dragRef.current
       if (!drag || e.pointerId !== drag.pointerId) return
+      const { start: s, end: en } = selectionRef.current
+      // Commit one history entry for the finished drag
+      setSelection(s, en, { recordHistory: true, scrubTo: null })
+      setScrubTime(null)
       dragRef.current = null
       setDragging(null)
     }
@@ -88,7 +93,7 @@ export function Timeline() {
       window.removeEventListener('pointerup', onUp)
       window.removeEventListener('pointercancel', onUp)
     }
-  }, [setSelection])
+  }, [setSelection, setScrubTime])
 
   const beginDrag = (kind: DragKind, e: ReactPointerEvent) => {
     if (!duration) return
@@ -104,6 +109,8 @@ export function Timeline() {
       grabOffset: kind === 'range' ? t - s : 0,
     }
     setDragging(kind)
+    const scrubTo = kind === 'end' ? en : s
+    setScrubTime(scrubTo)
     try {
       ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
     } catch {
@@ -127,8 +134,16 @@ export function Timeline() {
           Loop selection
         </label>
         <div className={styles.times}>
-          <TimeField label="Start" value={start} onCommit={(v) => setSelection(v, end)} />
-          <TimeField label="End" value={end} onCommit={(v) => setSelection(start, v)} />
+          <TimeField
+            label="Start"
+            value={start}
+            onCommit={(v) => setSelection(v, end, { scrubTo: v })}
+          />
+          <TimeField
+            label="End"
+            value={end}
+            onCommit={(v) => setSelection(start, v, { scrubTo: v })}
+          />
           <span className={styles.duration} title="Selection length">
             {formatDuration(end - start)}
           </span>
@@ -145,7 +160,6 @@ export function Timeline() {
         aria-label="Trim range"
         title="Drag the blue handles to set start and end. Drag the middle to move the selection."
         onPointerDown={(e) => {
-          // Click empty track: move nearest handle
           if ((e.target as HTMLElement).closest(`.${styles.range}`)) return
           if (!duration) return
           const t = timeFromClientX(e.clientX)
@@ -183,7 +197,7 @@ export function Timeline() {
         </div>
       </div>
       <p className="dim" style={{ fontSize: '0.8rem' }}>
-        Drag the blue handles to trim. You can also type Start/End times above.
+        Drag the blue handles to trim. Preview follows forward and backward.
       </p>
     </div>
   )

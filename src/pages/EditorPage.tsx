@@ -43,7 +43,7 @@ export function EditorPage() {
 
       <div className={`container ${styles.layout}`}>
         <section className={styles.main}>
-          <VideoPreview ref={previewRef} />
+          <VideoPreview ref={previewRef} onPickFiles={(f) => void ingestFiles(f)} />
           <Timeline />
           <SamplePreviewButton />
           <ExportBar />
